@@ -10,14 +10,24 @@
 
     <div class="game-container">
         
-        <div id="menu-screen" class="screen active">
+        <div id="menu-screen" class="screen">
             <h1 class="logo">MATH<span class="accent">QUEST</span></h1>
             <p class="subtitle">Träna hjärnan. Lås upp nivåer.</p>
             <button class="btn primary" onclick="goToScreen('level-screen')">Spela</button>
-            <button class="btn secondary" onclick="alert('Välj nivå, fyll mätaren till 100% för att vinna!')">Hur man spelar</button>
+            <button class="btn secondary" onclick="goToScreen('help-screen')">Hur man spelar</button>
         </div>
 
-        <div id="level-screen" class="screen">
+        <div id="help-screen" class="screen hidden">
+            <h2>Hur man spelar</h2>
+            <div class="card help-card">
+                <p>1. Välj en utmaning i menyn.</p>
+                <p>2. Tryck på "Börja Utmaningen".</p>
+                <p>3. Svara rätt på 5 frågor i rad för och fyll mätaren för att vinna nivån!</p>
+            </div>
+            <button class="btn primary" onclick="goToScreen('menu-screen')">Jag fattar!</button>
+        </div>
+
+        <div id="level-screen" class="screen hidden">
             <h2>Välj Utmaning</h2>
             <div class="level-grid">
                 <button class="level-btn" id="lvl-btn-1" onclick="selectLevel(1)">1<span class="lvl-title">Addition</span></button>
@@ -32,7 +42,7 @@
             <button class="btn text-btn" onclick="goToScreen('menu-screen')">← Tillbaka</button>
         </div>
 
-        <div id="game-screen" class="screen">
+        <div id="game-screen" class="screen hidden">
             <div class="game-header">
                 <span id="level-indicator">Nivå 1</span>
                 <span>Mål: 5 Rätta</span>
@@ -52,12 +62,12 @@
             <button class="btn text-btn" onclick="resetAndGoBack()">Avbryt</button>
         </div>
 
-        <div id="victory-screen" class="screen">
+        <div id="victory-screen" class="screen hidden">
             <div class="victory-card">
                 <div class="trophy">🏆</div>
                 <h2>Nivå Avklarad!</h2>
-                <p id="victory-text">Du krossade nivå 1!</p>
-                <button class="btn primary" onclick="resetAndGoBack()">Fortsätt</button>
+                <p id="victory-text">Du krossade nivån!</p>
+                <button class="btn primary" onclick="resetAndGoBack()">Tillbaka till menyer</button>
             </div>
         </div>
 
