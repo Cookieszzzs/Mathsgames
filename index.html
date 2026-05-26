@@ -3,46 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MathQuest</title>
+    <title>MathQuest Pro</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="game-container">
         
-        <div id="menu-screen" class="screen">
+        <div id="menu-screen" class="screen active">
             <h1 class="logo">MATH<span class="accent">QUEST</span></h1>
             <p class="subtitle">Träna hjärnan. Lås upp nivåer.</p>
             <button class="btn primary" onclick="goToScreen('level-screen')">Spela</button>
-            <button class="btn secondary" onclick="alert('Välj en nivå, tryck på Börja och svara rätt på 5 frågor!')">Hur man spelar</button>
+            <button class="btn secondary" onclick="alert('Välj nivå, fyll mätaren till 100% för att vinna!')">Hur man spelar</button>
         </div>
 
-        <div id="level-screen" class="screen hidden">
-            <h2>Välj Nivå</h2>
+        <div id="level-screen" class="screen">
+            <h2>Välj Utmaning</h2>
             <div class="level-grid">
-                <button class="level-btn" id="lvl-btn-1" onclick="selectLevel(1)">1<span class="lvl-title">Enkelt</span></button>
-                <button class="level-btn" id="lvl-btn-2" onclick="selectLevel(2)">2<span class="lvl-title">Medel</span></button>
-                <button class="level-btn" id="lvl-btn-3" onclick="selectLevel(3)">3<span class="lvl-title">Expert</span></button>
+                <button class="level-btn" id="lvl-btn-1" onclick="selectLevel(1)">1<span class="lvl-title">Addition</span></button>
+                <button class="level-btn" id="lvl-btn-2" onclick="selectLevel(2)">2<span class="lvl-title">Subtraktion</span></button>
+                <button class="level-btn" id="lvl-btn-3" onclick="selectLevel(3)">3<span class="lvl-title">Multiplikation</span></button>
+                <button class="level-btn" id="lvl-btn-4" onclick="selectLevel(4)">4<span class="lvl-title">Division</span></button>
+                <button class="level-btn" id="lvl-btn-5" onclick="selectLevel(5)">5<span class="lvl-title">Potenser</span></button>
+                <button class="level-btn" id="lvl-btn-6" onclick="selectLevel(6)">6<span class="lvl-title">Kaosläge</span></button>
             </div>
             
-            <button id="start-game-btn" class="btn primary" onclick="startGame()" disabled>Börja Spela</button>
+            <button id="start-game-btn" class="btn primary" onclick="startGame()" disabled>Börja Utmaningen</button>
             <button class="btn text-btn" onclick="goToScreen('menu-screen')">← Tillbaka</button>
         </div>
 
-        <div id="game-screen" class="screen hidden">
+        <div id="game-screen" class="screen">
             <div class="game-header">
                 <span id="level-indicator">Nivå 1</span>
-                <span>Poäng: <strong id="score">0</strong>/5</span>
+                <span>Mål: 5 Rätta</span>
+            </div>
+
+            <div class="progress-container">
+                <div id="progress-bar" class="progress-bar"></div>
             </div>
             
-            <div class="card">
+            <div id="game-card" class="card">
                 <div id="question" class="question">0 + 0</div>
-                <input type="number" id="answer-input" placeholder="Ditt svar..." autocomplete="off">
-                <button id="submit-btn" class="btn primary">Skicka svar</button>
+                <input type="number" id="answer-input" placeholder="Svar..." autocomplete="off">
+                <button id="submit-btn" class="btn primary">Skicka Svar</button>
             </div>
 
             <div id="feedback" class="feedback"></div>
             <button class="btn text-btn" onclick="resetAndGoBack()">Avbryt</button>
+        </div>
+
+        <div id="victory-screen" class="screen">
+            <div class="victory-card">
+                <div class="trophy">🏆</div>
+                <h2>Nivå Avklarad!</h2>
+                <p id="victory-text">Du krossade nivå 1!</p>
+                <button class="btn primary" onclick="resetAndGoBack()">Fortsätt</button>
+            </div>
         </div>
 
     </div>
