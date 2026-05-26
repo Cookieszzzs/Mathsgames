@@ -12,7 +12,7 @@
 <body>
 
     <div class="game-container">
-        <button id="theme-toggle" class="theme-toggle-btn">🚀</button>
+        <button id="theme-open-btn" class="theme-toggle-btn" onclick="openThemeModal()">🎨 Byt miljö</button>
         
         <div id="menu-screen" class="screen">
             <h1 class="logo">MATH QUESTS<br><span class="logo-sub" id="logo-sub">CYBER</span></h1>
@@ -69,17 +69,16 @@
 
         <div id="victory-screen" class="screen hidden">
             <div class="victory-card epic-win">
-                <div class="epic-glow-circle"></div>
                 <div class="end-icon" id="victory-icon">🏆</div>
                 <h2 id="victory-title">UTMANINGEN AVKLARAD</h2>
                 
                 <div class="stats-badge">
-                    <span class="badge-label">PRESTATION</span>
+                    <span class="badge-label" id="badge-label">PRESTATION</span>
                     <div id="victory-lives-left" class="badge-value">❤️❤️❤️</div>
                 </div>
 
-                <p id="victory-text">Systemet är helt under din kontroll!</p>
-                <button class="btn primary epic-btn" onclick="resetAndGoBack()">Fortsätt Erövringen</button>
+                <p id="victory-text">Snyggt krossat!</p>
+                <button class="btn primary epic-btn" onclick="resetAndGoBack()">Fortsätt</button>
             </div>
         </div>
 
@@ -90,6 +89,17 @@
                 <p class="subtitle" id="fail-text" style="margin-bottom: 24px;">Dina liv tog slut.</p>
                 <button class="btn primary" onclick="retryCurrentLevel()">Försök Igen</button>
                 <button class="btn text-btn" onclick="resetAndGoBack()">Avbryt uppdraget</button>
+            </div>
+        </div>
+
+        <div id="theme-modal" class="modal-overlay hidden" onclick="closeThemeModalOnOverlay(event)">
+            <div class="modal-card">
+                <h3 id="modal-title">Välj din miljö</h3>
+                <div class="modal-options">
+                    <button class="modal-opt-btn" onclick="selectThemeViaModal('cyber')">🚀 Cyber-Neon</button>
+                    <button class="modal-opt-btn" onclick="selectThemeViaModal('dungeon')">🏰 Dungeons</button>
+                </div>
+                <button class="btn text-btn" onclick="closeThemeModal()">Avbryt</button>
             </div>
         </div>
 
