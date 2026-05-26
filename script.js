@@ -6,7 +6,6 @@ const targetScore = 5;
 let currentAnswer = 0;
 let completedLevels = [];
 
-// BUGGFIX-SPÄRR: Motverkar spam av Enter-tangenten
 let isTransitioning = false;
 
 const answerInput = document.getElementById('answer-input');
@@ -18,6 +17,7 @@ const startGameBtn = document.getElementById('start-game-btn');
 const submitBtn = document.getElementById('submit-btn');
 const progressBar = document.getElementById('progress-bar');
 const gameCard = document.getElementById('game-card');
+const themeModal = document.getElementById('theme-modal');
 
 function goToScreen(screenId) {
     document.querySelectorAll('.screen').forEach(screen => {
@@ -150,14 +150,25 @@ function checkAnswer() {
             }
             updateMenuButtons();
             setTimeout(() => {
-                // Dynamisk 10/10-uppdatering: Visar hur många liv som klarade sig
                 document.getElementById('victory-lives-left').textContent = "❤️".repeat(lives);
                 
-                const txt = currentTheme === 'cyber' ? 
-                    `Systemet är helt under din kontroll på Nivå ${currentLevel}!` : 
-                    `Grottvalven skälver, du har erövrat Nivå ${currentLevel}!`;
-                document.getElementById('victory-text').textContent = txt;
+                // MÄNSKLIGA TEXTER (10/10 Pepp istället för AI-robot-snack)
+                let humanText = "";
+                if (currentTheme === 'cyber') {
+                    if (lives === 3) {
+                        humanText = `Snyggt! Du fullkomligt krossade nivå ${currentLevel} utan att tappa ett enda liv. Total dominans!`;
+                    } else {
+                        humanText = `Grymt kört! Du knäckte koderna och rensade nivå ${currentLevel}. Systemet är ditt!`;
+                    }
+                } else {
+                    if (lives === 3) {
+                        humanText = `Perfekt runda! Du stormade igenom nivå ${currentLevel} helt oskadd. Skatterna är dina!`;
+                    } else {
+                        humanText = `Riktigt bra kört! Du överlevde fällorna på nivå ${currentLevel} och tog dig ut i ljuset. Snyggt!`;
+                    }
+                }
                 
+                document.getElementById('victory-text').textContent = humanText;
                 goToScreen('victory-screen');
             }, 500);
         } else {
@@ -223,18 +234,33 @@ answerInput.addEventListener('keydown', (e) => {
 
 
 // =========================================
-//  TEMA-SWITCHARE LOGIK (Cyber ⇄ Dungeon)
+//  POP-UP LOGIK FÖR TEMABYTE
 // =========================================
-const themeToggleBtn = document.getElementById('theme-toggle');
 let currentTheme = localStorage.getItem('mathgame-theme') || 'cyber';
 
+// Applicera sparade temat direkt vid start (Progressen hänger med!)
 applyTheme(currentTheme);
 
-themeToggleBtn.addEventListener('click', () => {
-    currentTheme = currentTheme === 'cyber' ? 'dungeon' : 'cyber';
-    applyTheme(currentTheme);
-    localStorage.setItem('mathgame-theme', currentTheme); 
-});
+function openThemeModal() {
+    themeModal.classList.remove('hidden');
+}
+
+function closeThemeModal() {
+    themeModal.classList.add('hidden');
+}
+
+function closeThemeModalOnOverlay(e) {
+    if (e.target === themeModal) {
+        closeThemeModal();
+    }
+}
+
+function selectThemeViaModal(theme) {
+    currentTheme = theme;
+    applyTheme(theme);
+    localStorage.setItem('mathgame-theme', theme); // Sparar valet i webbläsaren
+    closeThemeModal();
+}
 
 function applyTheme(theme) {
     document.body.className = `theme-${theme}`;
@@ -253,7 +279,6 @@ function applyTheme(theme) {
     const failIcon = document.getElementById('fail-icon');
 
     if (theme === 'cyber') {
-        themeToggleBtn.textContent = '🏰'; 
         if(logoSub) logoSub.textContent = 'CYBER';
         if(subtitle) subtitle.textContent = 'Överlista systemet. Knäck koden. Vinn racet.';
         if(enterBtn) enterBtn.textContent = 'Gå in i systemet';
@@ -267,7 +292,6 @@ function applyTheme(theme) {
         if(failText) failText.textContent = 'Dina liv tog slut.';
         if(failIcon) failIcon.textContent = '💥';
     } else {
-        themeToggleBtn.textContent = '🚀'; 
         if(logoSub) logoSub.textContent = 'DUNGEONS';
         if(subtitle) subtitle.textContent = 'Överlev grottorna. Knäck koden. Erövra skatten.';
         if(enterBtn) enterBtn.textContent = 'Gå in i grottan';
