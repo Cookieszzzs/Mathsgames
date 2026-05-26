@@ -2,185 +2,206 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 body {
-    background-color: #0f172a;
+    background-color: #0b0f19;
     color: #f8fafc;
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
 }
 
 .game-container {
     width: 100%;
-    max-width: 420px;
-    padding: 20px;
+    max-width: 440px;
+    padding: 24px;
+    position: relative;
 }
 
+/* SMOOTH SCREEN TRANSITIONS */
 .screen {
-    display: flex;
+    display: none;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    width: 100%;
     flex-direction: column;
     align-items: center;
-    width: 100%;
 }
 
-.hidden {
-    display: none !important;
+.screen.active {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0);
 }
 
+/* LOGO & TEXT */
 .logo {
-    font-size: 3rem;
-    font-weight: 800;
-    letter-spacing: -1px;
-    margin-bottom: 5px;
+    font-size: 3.5rem;
+    font-weight: 900;
+    letter-spacing: -2px;
+    margin-bottom: 8px;
+    background: linear-gradient(to right, #fff, #38bdf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-.accent {
-    color: #38bdf8;
-}
+.accent { color: #38bdf8; }
+.subtitle { color: #64748b; margin-bottom: 40px; font-size: 1.1rem; }
+h2 { font-size: 2rem; margin-bottom: 24px; font-weight: 800; letter-spacing: -0.5px; }
 
-.subtitle {
-    color: #94a3b8;
-    margin-bottom: 40px;
-}
-
-h2 {
-    font-size: 1.8rem;
-    margin-bottom: 30px;
-    font-weight: 700;
-}
-
+/* GUI: 6 NIVEAU GRID */
 .level-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
     width: 100%;
-    margin-bottom: 30px;
+    margin-bottom: 24px;
 }
 
 .level-btn {
-    background: #1e293b;
-    border: 2px solid #334155;
+    background: #111827;
+    border: 2px solid #1f2937;
     color: white;
-    padding: 20px 10px;
+    padding: 16px;
     border-radius: 16px;
-    font-size: 1.8rem;
-    font-weight: bold;
+    font-size: 1.5rem;
+    font-weight: 800;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
 .level-btn:hover {
-    border-color: #475569;
+    border-color: #4b5563;
+    transform: translateY(-2px);
 }
 
-/* STIL FÖR VALD NIVÅ */
 .level-btn.selected {
     border-color: #38bdf8;
-    background: rgba(56, 189, 248, 0.1);
-    box-shadow: 0 0 15px rgba(56, 189, 248, 0.15);
+    background: rgba(56, 189, 248, 0.08);
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.15);
 }
 
 .lvl-title {
-    font-size: 0.75rem;
-    color: #94a3b8;
-    font-weight: normal;
-    margin-top: 5px;
+    font-size: 0.8rem;
+    color: #64748b;
+    font-weight: 500;
+    margin-top: 4px;
 }
 
+/* GUI: PROGRESS BAR */
+.progress-container {
+    width: 100%;
+    height: 8px;
+    background: #1f2937;
+    border-radius: 99px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #38bdf8, #06b6d4);
+    border-radius: 99px;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* CARD & GAMEPLAY */
 .game-header {
     width: 100%;
     display: flex;
     justify-content: space-between;
     color: #94a3b8;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
+    font-weight: 500;
 }
 
 .card {
-    background: #1e293b;
-    border: 1px solid #334155;
+    background: #111827;
+    border: 1px solid #1f2937;
     width: 100%;
-    padding: 40px 30px;
+    padding: 32px;
     border-radius: 24px;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     text-align: center;
 }
 
 .question {
-    font-size: 3rem;
-    font-weight: 700;
-    margin-bottom: 30px;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 24px;
+    letter-spacing: -1px;
 }
 
 input[type="number"] {
     width: 100%;
-    padding: 14px;
-    background: #0f172a;
-    border: 2px solid #334155;
-    border-radius: 12px;
+    padding: 16px;
+    background: #0b0f19;
+    border: 2px solid #1f2937;
+    border-radius: 14px;
     color: white;
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     text-align: center;
     outline: none;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
 }
 
-input[type="number"]:focus {
-    border-color: #38bdf8;
-}
+input[type="number"]:focus { border-color: #38bdf8; }
 
+/* BUTTONS */
 .btn {
     width: 100%;
-    padding: 14px;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 600;
+    padding: 16px;
+    border-radius: 14px;
+    font-size: 1.05rem;
+    font-weight: 700;
     cursor: pointer;
     border: none;
     transition: all 0.2s;
-    margin-bottom: 12px;
 }
 
-.primary {
-    background: #38bdf8;
-    color: #0f172a;
-}
+.primary { background: #38bdf8; color: #0b0f19; }
+.primary:hover { background: #7dd3fc; transform: scale(1.01); }
+.primary:active { transform: scale(0.99); }
 
-.primary:hover {
-    background: #0ea5e9;
-}
+.btn:disabled { background: #111827; color: #4b5563; border: 1px solid #1f2937; cursor: not-allowed; }
+.secondary { background: #1f2937; color: #f8fafc; }
+.text-btn { background: transparent; color: #475569; margin-top: 12px; }
+.text-btn:hover { color: #94a3b8; }
 
-/* STIL FÖR LÅST BUTTON (Innan man valt nivå) */
-.btn:disabled {
-    background: #1e293b;
-    color: #475569;
-    border: 1px solid #334155;
-    cursor: not-allowed;
-}
-
-.secondary {
-    background: #334155;
-    color: #f8fafc;
-}
-
-.text-btn {
-    background: transparent;
-    color: #64748b;
-}
-
-.text-btn:hover {
-    color: #94a3b8;
-}
-
-.feedback {
-    margin-top: 20px;
-    min-height: 25px;
-}
+/* FEEDBACK & ANIMATIONS */
+.feedback { margin-top: 16px; min-height: 24px; font-weight: 600; font-size: 1.05rem; }
 .correct { color: #34d399; }
 .wrong { color: #f87171; }
+
+/* Skaka kortet vid fel svar */
+.shake { animation: shake 0.4s ease-in-out; }
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-8px); }
+    40%, 80% { transform: translateX(8px); }
+}
+
+/* VINSTSKÄRM GRAPHICS */
+.victory-card {
+    text-align: center;
+    padding: 20px;
+}
+.trophy {
+    font-size: 5rem;
+    margin-bottom: 16px;
+    animation: bounce 1s infinite alternate;
+}
+@keyframes bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-12px); }
+}
