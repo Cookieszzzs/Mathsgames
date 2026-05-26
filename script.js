@@ -1,27 +1,43 @@
-let currentLevel = 1;
+let selectedLevel = null; // Sparar vilken nivå spelaren klickat på
+let currentLevel = 1;     // Den aktiva nivån i spelet
 let score = 0;
 let currentAnswer = 0;
 
-// Hämta element
 const answerInput = document.getElementById('answer-input');
 const questionElement = document.getElementById('question');
 const scoreElement = document.getElementById('score');
 const feedbackElement = document.getElementById('feedback');
 const levelIndicator = document.getElementById('level-indicator');
+const startGameBtn = document.getElementById('start-game-btn');
 
-// Funktion för att byta skärm
 function goToScreen(screenId) {
-    // Göm alla skärmar
     document.querySelectorAll('.screen').forEach(screen => {
         screen.classList.add('hidden');
     });
-    // Visa den valda skärmen
     document.getElementById(screenId).classList.remove('hidden');
 }
 
-// Starta en specifik nivå
-function startLevel(levelNumber) {
-    currentLevel = levelNumber;
+// 1. Kallas när spelaren klickar på en nivåknapp
+function selectLevel(levelNumber) {
+    selectedLevel = levelNumber;
+
+    // Nollställ grafik på alla nivåknappar
+    document.querySelectorAll('.level-btn').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+
+    // Markera den valda knappen som aktiv
+    document.getElementById(`lvl-btn-${levelNumber}`).classList.add('selected');
+
+    // Lås upp "Börja spela"-knappen
+    startGameBtn.disabled = false;
+}
+
+// 2. Kallas när spelaren klickar på "Börja Spela"-knappen
+function startGame() {
+    if (selectedLevel === null) return; // Säkerhetsspärr
+
+    currentLevel = selectedLevel;
     score = 0;
     scoreElement.textContent = score;
     levelIndicator.textContent = `Nivå ${currentLevel}`;
@@ -30,27 +46,23 @@ function startLevel(levelNumber) {
     generateQuestion();
 }
 
-// Generera mattetal baserat på nivå
 function generateQuestion() {
     let num1, num2;
-    feedbackElement.textContent = ""; // Rensa feedback
+    feedbackElement.textContent = "";
     answerInput.value = "";
     answerInput.focus();
 
     if (currentLevel === 1) {
-        // Nivå 1: Enkel addition (1-10)
         num1 = Math.floor(Math.random() * 10) + 1;
         num2 = Math.floor(Math.random() * 10) + 1;
         currentAnswer = num1 + num2;
         questionElement.textContent = `${num1} + ${num2}`;
     } else if (currentLevel === 2) {
-        // Nivå 2: Subtraktion (1-30)
         num1 = Math.floor(Math.random() * 20) + 10;
         num2 = Math.floor(Math.random() * 10) + 1;
         currentAnswer = num1 - num2;
         questionElement.textContent = `${num1} - ${num2}`;
     } else if (currentLevel === 3) {
-        // Nivå 3: Multiplikation (2-9)
         num1 = Math.floor(Math.random() * 8) + 2;
         num2 = Math.floor(Math.random() * 8) + 2;
         currentAnswer = num1 * num2;
@@ -58,10 +70,8 @@ function generateQuestion() {
     }
 }
 
-// Kontrollera svaret
 function checkAnswer() {
     const userAnswer = parseInt(answerInput.value);
-
     if (isNaN(userAnswer)) return;
 
     if (userAnswer === currentAnswer) {
@@ -70,14 +80,13 @@ function checkAnswer() {
         feedbackElement.textContent = "Snyggt! Rätt svar. ✨";
         feedbackElement.className = "feedback correct";
         
-        // Kolla om nivån är avklarad (t.ex. vid 5 poäng)
         if (score >= 5) {
             setTimeout(() => {
                 alert(`Grymt jobbat! Du klarade Nivå ${currentLevel}! 🎉`);
-                goToScreen('level-screen');
+                resetAndGoBack();
             }, 500);
         } else {
-            setTimeout(generateQuestion, 1000); // Gå till nästa fråga efter 1 sekund
+            setTimeout(generateQuestion, 1000);
         }
     } else {
         feedbackElement.textContent = "Försök igen! ❌";
@@ -87,7 +96,16 @@ function checkAnswer() {
     }
 }
 
-// Eventlisteners
+// Återställer valen när man går tillbaka till menyerna
+function resetAndGoBack() {
+    selectedLevel = null;
+    startGameBtn.disabled = true;
+    document.querySelectorAll('.level-btn').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+    goToScreen('level-screen');
+}
+
 document.getElementById('submit-btn').addEventListener('click', checkAnswer);
 answerInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') checkAnswer();
