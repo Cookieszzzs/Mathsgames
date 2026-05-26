@@ -10,15 +10,14 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
     <div class="game-container">
         
         <div id="menu-screen" class="screen">
             <h1 class="logo">MATH QUESTS<br><span class="logo-sub" id="logo-sub">CYBER</span></h1>
-            <p class="subtitle" id="menu-subtitle">Testa dina kunskaper och klara så mång nivåer som du bara kan. Klarar du alla? Då finns det något som finns till dig!</p>
-            <button class="btn primary" onclick="goToScreen('level-screen')" id="enter-btn">Starta</button>
-            <button class="btn secondary" onclick="goToScreen('help-screen')" id="guide-btn">Hur Spelar Man?</button>
-            
-            <button id="theme-open-btn" class="theme-toggle-btn" onclick="openThemeModal()">🎨 Byt tema</button>
+            <p class="subtitle" id="menu-subtitle">Överlista systemet. Knäck koden. Vinn racet.</p>
+            <button class="btn primary" onclick="goToScreen('level-screen')" id="enter-btn">Gå in i systemet</button>
+            <button class="btn secondary" onclick="goToScreen('help-screen')" id="guide-btn">Regler & Manual</button>
         </div>
 
         <div id="help-screen" class="screen hidden">
@@ -32,8 +31,11 @@
             <button class="btn primary" onclick="goToScreen('menu-screen')">Jag är ready!</button>
         </div>
 
-        <div id="level-screen" class="screen hidden">
+        <div id="level-screen" class="screen hidden" style="position: relative;">
+            <div id="corner-trophy" class="corner-trophy hidden">🏆</div>
+
             <h2 id="map-title">Välj Nivå</h2>
+            
             <div class="level-grid">
                 <button class="level-btn" id="lvl-btn-1" onclick="selectLevel(1)">1<span class="lvl-title">Addition</span></button>
                 <button class="level-btn" id="lvl-btn-2" onclick="selectLevel(2)">2<span class="lvl-title">Subtraktion</span></button>
@@ -43,6 +45,8 @@
                 <button class="level-btn" id="lvl-btn-6" onclick="selectLevel(6)">6<span class="lvl-title">Kaosläge</span></button>
             </div>
             
+            <button id="next-pack-btn" class="btn epic-btn hidden" onclick="activateNextPack()" style="margin-bottom: 16px; animation: cyberPulseBtn 1.5s infinite alternate;"></button>
+
             <button id="start-game-btn" class="btn primary" onclick="startGame()" disabled>Börja Utmaningen</button>
             <button class="btn text-btn" onclick="resetAndGoBack()">← Tillbaka</button>
         </div>
@@ -90,6 +94,10 @@
                 <button class="btn primary" onclick="retryCurrentLevel()">Försök Igen</button>
                 <button class="btn text-btn" onclick="resetAndGoBack()">Avbryt uppdraget</button>
             </div>
+        </div>
+
+        <div class="theme-bottom-container">
+            <button id="theme-open-btn" class="theme-toggle-btn" onclick="openThemeModal()">🎨 Byt miljö</button>
         </div>
 
         <div id="theme-modal" class="modal-overlay hidden" onclick="closeThemeModalOnOverlay(event)">
