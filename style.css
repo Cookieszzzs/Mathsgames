@@ -44,16 +44,19 @@ body {
     right: 20px;
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.15);
-    font-size: 1.4rem;
-    padding: 10px;
-    border-radius: 50%;
+    font-size: 0.9rem;
+    font-weight: 800;
+    padding: 10px 16px;
+    border-radius: 99px;
     cursor: pointer;
     z-index: 10;
     transition: all 0.3s ease;
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 .theme-toggle-btn:hover {
-    transform: scale(1.1) rotate(15deg);
+    transform: scale(1.05);
     background: rgba(255, 255, 255, 0.2);
 }
 
@@ -117,7 +120,7 @@ input[type="number"] { width: 100%; padding: 16px; border-radius: 14px; text-ali
 }
 .end-icon { font-size: 6rem; margin-bottom: 16px; display: inline-block; }
 
-/* --- 10/10 EPISK VINST-ANIMATIONER --- */
+/* --- VINST-ANIMATIONER --- */
 .epic-win {
     animation: epicReveal 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
@@ -156,6 +159,46 @@ input[type="number"] { width: 100%; padding: 16px; border-radius: 14px; text-ali
 .shake { animation: shakeEffect 0.3s ease; }
 @keyframes shakeEffect { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
 
+/* --- POP-UP (MODAL) ALLMÄN STIL --- */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.2s ease;
+}
+.modal-card {
+    width: 90%;
+    max-width: 360px;
+    padding: 28px;
+    border-radius: 24px;
+    text-align: center;
+    animation: modalScaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.modal-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 24px 0 12px 0;
+}
+.modal-opt-btn {
+    width: 100%;
+    padding: 16px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    cursor: pointer;
+    border: none;
+    border-radius: 14px;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modalScaleUp { from { opacity: 0; transform: scale(0.9) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
 
 /* =========================================
    TEMA 1: CYBER-NEON (Framtid / Sci-Fi)
@@ -168,6 +211,7 @@ body.theme-cyber {
 body.theme-cyber::before {
     content: ""; position: absolute; width: 300px; height: 300px; background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, rgba(0,0,0,0) 70%); top: 10%; left: 10%; filter: blur(30px);
 }
+.theme-cyber .theme-toggle-btn { background: rgba(56, 189, 248, 0.1); border-color: rgba(56, 189, 248, 0.3); color: #38bdf8; }
 .theme-cyber .logo { font-family: 'Orbitron', sans-serif; font-size: 3.2rem; background: linear-gradient(135deg, #fff, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 15px rgba(56,189,248,0.3)); }
 .theme-cyber .logo-sub { color: #38bdf8; font-family: 'Orbitron', sans-serif; }
 .theme-cyber .subtitle { color: #64748b; }
@@ -175,35 +219,30 @@ body.theme-cyber::before {
 .theme-cyber .game-header { font-family: 'Orbitron', sans-serif; color: #64748b; }
 .theme-cyber .lives { filter: drop-shadow(0 0 8px #ef4444); }
 
-/* Card & Inputs */
-.theme-cyber .card, .theme-cyber .victory-card { background: rgba(17, 24, 39, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+/* Card, Victory & Pop-up */
+.theme-cyber .card, .theme-cyber .victory-card, .theme-cyber .modal-card { background: rgba(17, 24, 39, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+.theme-cyber #modal-title { font-family: 'Orbitron', sans-serif; color: #fff; font-size: 1.4rem; }
+.theme-cyber .modal-opt-btn { background: rgba(31, 41, 55, 0.6); color: #fff; border: 1px solid rgba(255,255,255,0.05); }
+.theme-cyber .modal-opt-btn:hover { border-color: #38bdf8; background: rgba(56, 189, 248, 0.1); color: #38bdf8; transform: translateX(4px); }
 .theme-cyber input[type="number"] { background: rgba(7, 10, 19, 0.6); border: 2px solid rgba(255, 255, 255, 0.08); color: white; font-family: 'Orbitron', sans-serif; }
 .theme-cyber input[type="number"]:focus { border-color: #38bdf8; box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); }
 
-/* Cyber 10/10 Victory Specifikt */
+/* Cyber Victory */
 .theme-cyber .epic-win {
     --glow-color: #00ffcc;
     border: 2px solid #00ffcc;
-    box-shadow: 0 0 40px rgba(0, 255, 204, 0.25), inset 0 0 20px rgba(0, 255, 204, 0.1);
+    box-shadow: 0 0 40px rgba(0, 255, 204, 0.25);
 }
 .theme-cyber #victory-title {
     font-family: 'Orbitron', sans-serif;
     font-size: 2.3rem;
-    font-weight: 900;
-    letter-spacing: 2px;
     background: linear-gradient(90deg, #00ffcc, #38bdf8, #a855f7);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     filter: drop-shadow(0 0 12px rgba(0,255,204,0.5));
-    margin-bottom: 10px;
 }
-.theme-cyber .epic-btn {
-    animation: cyberPulseBtn 1.5s infinite alternate;
-}
-@keyframes cyberPulseBtn {
-    0% { box-shadow: 0 5px 15px rgba(56, 189, 248, 0.4); }
-    100% { box-shadow: 0 5px 25px rgba(0, 255, 204, 0.8); transform: scale(1.02); }
-}
+.theme-cyber #victory-text { color: #94a3b8; font-size: 1.05rem; }
+.theme-cyber .epic-btn { animation: cyberPulseBtn 1.5s infinite alternate; }
+@keyframes cyberPulseBtn { 0% { box-shadow: 0 5px 15px rgba(56, 189, 248, 0.4); } 100% { box-shadow: 0 5px 25px rgba(0, 255, 204, 0.8); transform: scale(1.02); } }
 
 /* Grid & Progress */
 .theme-cyber .level-btn { background: rgba(31, 41, 55, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); color: #94a3b8; font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 800; }
@@ -238,6 +277,7 @@ body.theme-dungeon::before {
 }
 @keyframes flicker { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; } }
 
+.theme-dungeon .theme-toggle-btn { background: #3f3024; border-color: #d4af37; color: #ffe08a; font-family: 'Grenze Gotisch', serif; }
 .theme-dungeon .logo { font-family: 'Grenze Gotisch', serif; font-size: 3.2rem; background: linear-gradient(180deg, #ffe08a, #d4af37); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.9)); }
 .theme-dungeon .logo-sub { background: linear-gradient(180deg, #ff6b6b, #ee0000); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.9)); }
 .theme-dungeon .subtitle { color: #8e8171; }
@@ -245,38 +285,43 @@ body.theme-dungeon::before {
 .theme-dungeon .game-header { font-family: 'Grenze Gotisch', serif; color: #8e8171; font-size: 1.2rem; }
 .theme-dungeon .lives { filter: drop-shadow(0 0 6px #ee0000); }
 
-/* Card & Inputs */
-.theme-dungeon .card, .theme-dungeon .victory-card { background-color: #2a1f15; background-image: url('https://www.transparenttextures.com/patterns/dark-rock.png'); border: 4px solid #3f3024; box-shadow: 0 15px 35px #000, inset 0 0 20px rgba(0,0,0,0.6); border-radius: 8px; }
+/* Card, Victory & Pop-up */
+.theme-dungeon .card, .theme-dungeon .victory-card, .theme-dungeon .modal-card { background-color: #2a1f15; background-image: url('https://www.transparenttextures.com/patterns/dark-rock.png'); border: 4px solid #3f3024; box-shadow: 0 15px 35px #000, inset 0 0 20px rgba(0,0,0,0.6); border-radius: 8px; }
+.theme-dungeon #modal-title { font-family: 'Grenze Gotisch', serif; color: #d4af37; text-shadow: 0 2px 2px #000; font-size: 1.6rem; }
+.theme-dungeon .modal-opt-btn { background: #3f3024; color: #e0dac9; border: 2px solid #33251a; font-family: 'Grenze Gotisch', serif; font-size: 1.2rem; }
+.theme-dungeon .modal-opt-btn:hover { color: #ffe08a; border-color: #d4af37; background: #4a3b2c; transform: translateX(4px); }
 .theme-dungeon .help-card { background-color: #c9b999; background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png'); color: #33251a; border: 2px solid #8e8171; }
 .theme-dungeon .help-card p { border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 6px; margin-bottom: 6px; }
 .theme-dungeon input[type="number"] { background: #1a110a; border: 2px solid #33251a; color: #ffe08a; font-family: 'Grenze Gotisch', serif; border-radius: 4px; }
 .theme-dungeon input[type="number"]:focus { border-color: #d4af37; }
 
-/* Dungeon 10/10 Victory Specifikt */
+/* Dungeon Victory (FIXAD TEXTKONTRAST) */
 .theme-dungeon .epic-win {
     --glow-color: #ffaa00;
     border: 5px double #d4af37;
-    box-shadow: 0 0 50px rgba(212, 175, 55, 0.4), inset 0 0 30px rgba(0,0,0,0.8);
+    box-shadow: 0 0 50px rgba(212, 175, 55, 0.4);
 }
 .theme-dungeon #victory-title {
-    font-family: 'Grenze Gotisch', serif;
-    font-size: 2.8rem;
-    font-weight: 900;
+    font-family: 'Grenze Gotisch', serif; font-size: 2.8rem;
     background: linear-gradient(180deg, #ffe08a, #d4af37, #a67c00);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     filter: drop-shadow(0 3px 5px #000);
-    margin-bottom: 5px;
 }
+.theme-dungeon #victory-text { 
+    color: #fff6e0 !important; /* Supertydlig krämvit färg */
+    text-shadow: 0 2px 4px #000, 0 0 10px rgba(0,0,0,0.8); /* Kraftig skugga mot berget */
+    font-size: 1.2rem; 
+    font-weight: 600;
+}
+.theme-dungeon #badge-label { color: #8e8171; }
 .theme-dungeon .epic-btn {
     background: linear-gradient(135deg, #d4af37, #a67c00) !important;
     color: #1a110a !important;
     border: 1px solid #ffe08a !important;
     box-shadow: 0 4px 15px #000;
+    border-radius: 4px;
 }
-.theme-dungeon .epic-btn:hover {
-    background: linear-gradient(135deg, #ffe08a, #d4af37) !important;
-}
+.theme-dungeon .epic-btn:hover { background: linear-gradient(135deg, #ffe08a, #d4af37) !important; }
 
 /* Grid & Progress */
 .theme-dungeon .level-btn { background-color: #2a1f15; background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png'); border: 2px solid #3f3024; color: #a67c00; font-family: 'Grenze Gotisch', serif; font-size: 1.8rem; font-weight: 700; border-radius: 6px; text-shadow: 0 1px 1px #000; }
