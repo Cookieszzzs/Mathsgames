@@ -152,7 +152,7 @@ function checkAnswer() {
             setTimeout(() => {
                 document.getElementById('victory-lives-left').textContent = "❤️".repeat(lives);
                 
-                // MÄNSKLIGA TEXTER (10/10 Pepp istället för AI-robot-snack)
+                // MÄNSKLIGA TEXTER - Pepp på riktigt!
                 let humanText = "";
                 if (currentTheme === 'cyber') {
                     if (lives === 3) {
@@ -238,7 +238,6 @@ answerInput.addEventListener('keydown', (e) => {
 // =========================================
 let currentTheme = localStorage.getItem('mathgame-theme') || 'cyber';
 
-// Applicera sparade temat direkt vid start (Progressen hänger med!)
 applyTheme(currentTheme);
 
 function openThemeModal() {
@@ -258,7 +257,7 @@ function closeThemeModalOnOverlay(e) {
 function selectThemeViaModal(theme) {
     currentTheme = theme;
     applyTheme(theme);
-    localStorage.setItem('mathgame-theme', theme); // Sparar valet i webbläsaren
+    localStorage.setItem('mathgame-theme', theme); 
     closeThemeModal();
 }
 
