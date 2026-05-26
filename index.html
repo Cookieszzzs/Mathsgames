@@ -3,25 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snygga Mattespelet</title>
+    <title>MathQuest</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="game-container">
-        <h1>Mattemästaren</h1>
         
-        <div class="score-board">
-            <span>Poäng: <strong id="score">0</strong></span>
+        <div id="menu-screen" class="screen">
+            <h1 class="logo">MATH<span class="accent">QUEST</span></h1>
+            <p class="subtitle">Träna hjärnan. Lås upp nivåer.</p>
+            <button class="btn primary" onclick="goToScreen('level-screen')">Spela</button>
+            <button class="btn secondary" onclick="alert('Svara rätt på frågorna för att klara nivån!')">Hur man spelar</button>
         </div>
 
-        <div class="card">
-            <div id="question" class="question">Redo?</div>
-            <input type="number" id="answer-input" placeholder="Ditt svar..." autocomplete="off">
-            <button id="submit-btn">Svara</button>
+        <div id="level-screen" class="screen hidden">
+            <h2>Välj Nivå</h2>
+            <div class="level-grid">
+                <button class="level-btn" onclick="startLevel(1)">1<span class="lvl-title">Enkelt</span></button>
+                <button class="level-btn" onclick="startLevel(2)">2<span class="lvl-title">Medel</span></button>
+                <button class="level-btn" onclick="startLevel(3)">3<span class="lvl-title">Expert</span></button>
+            </div>
+            <button class="btn text-btn" onclick="goToScreen('menu-screen')">← Tillbaka</button>
         </div>
 
-        <div id="feedback" class="feedback"></div>
+        <div id="game-screen" class="screen hidden">
+            <div class="game-header">
+                <span id="level-indicator">Nivå 1</span>
+                <span>Poäng: <strong id="score">0</strong>/5</span>
+            </div>
+            
+            <div class="card">
+                <div id="question" class="question">0 + 0</div>
+                <input type="number" id="answer-input" placeholder="Ditt svar..." autocomplete="off">
+                <button id="submit-btn" class="btn primary">Skicka svar</button>
+            </div>
+
+            <div id="feedback" class="feedback"></div>
+            <button class="btn text-btn" onclick="goToScreen('level-screen')">Avbryt</button>
+        </div>
+
     </div>
 
     <script src="script.js"></script>
