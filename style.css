@@ -37,27 +37,23 @@ body {
     to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-/* TEMA-KNAPPEN */
+/* FIXAD: TEMA-KNAPPEN LIGGER NU SKEGGT I BOTTEN PÅ MENYN */
 .theme-toggle-btn {
-    position: absolute;
-    top: -20px;
-    right: 20px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    font-size: 0.9rem;
+    margin-top: 32px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.85rem;
     font-weight: 800;
-    padding: 10px 16px;
+    padding: 10px 20px;
     border-radius: 99px;
     cursor: pointer;
-    z-index: 10;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: all 0.2s ease;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 .theme-toggle-btn:hover {
     transform: scale(1.05);
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.12);
 }
 
 .card {
@@ -211,7 +207,7 @@ body.theme-cyber {
 body.theme-cyber::before {
     content: ""; position: absolute; width: 300px; height: 300px; background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, rgba(0,0,0,0) 70%); top: 10%; left: 10%; filter: blur(30px);
 }
-.theme-cyber .theme-toggle-btn { background: rgba(56, 189, 248, 0.1); border-color: rgba(56, 189, 248, 0.3); color: #38bdf8; }
+.theme-cyber .theme-toggle-btn { background: rgba(56, 189, 248, 0.05); border-color: rgba(56, 189, 248, 0.2); color: #38bdf8; }
 .theme-cyber .logo { font-family: 'Orbitron', sans-serif; font-size: 3.2rem; background: linear-gradient(135deg, #fff, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 15px rgba(56,189,248,0.3)); }
 .theme-cyber .logo-sub { color: #38bdf8; font-family: 'Orbitron', sans-serif; }
 .theme-cyber .subtitle { color: #64748b; }
@@ -277,7 +273,7 @@ body.theme-dungeon::before {
 }
 @keyframes flicker { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; } }
 
-.theme-dungeon .theme-toggle-btn { background: #3f3024; border-color: #d4af37; color: #ffe08a; font-family: 'Grenze Gotisch', serif; }
+.theme-dungeon .theme-toggle-btn { background: #3f3024; border-color: #33251a; color: #a67c00; font-family: 'Grenze Gotisch', serif; }
 .theme-dungeon .logo { font-family: 'Grenze Gotisch', serif; font-size: 3.2rem; background: linear-gradient(180deg, #ffe08a, #d4af37); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.9)); }
 .theme-dungeon .logo-sub { background: linear-gradient(180deg, #ff6b6b, #ee0000); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.9)); }
 .theme-dungeon .subtitle { color: #8e8171; }
@@ -295,7 +291,7 @@ body.theme-dungeon::before {
 .theme-dungeon input[type="number"] { background: #1a110a; border: 2px solid #33251a; color: #ffe08a; font-family: 'Grenze Gotisch', serif; border-radius: 4px; }
 .theme-dungeon input[type="number"]:focus { border-color: #d4af37; }
 
-/* Dungeon Victory (FIXAD TEXTKONTRAST) */
+/* Dungeon Victory */
 .theme-dungeon .epic-win {
     --glow-color: #ffaa00;
     border: 5px double #d4af37;
@@ -308,8 +304,8 @@ body.theme-dungeon::before {
     filter: drop-shadow(0 3px 5px #000);
 }
 .theme-dungeon #victory-text { 
-    color: #fff6e0 !important; /* Supertydlig krämvit färg */
-    text-shadow: 0 2px 4px #000, 0 0 10px rgba(0,0,0,0.8); /* Kraftig skugga mot berget */
+    color: #fff6e0 !important;
+    text-shadow: 0 2px 4px #000, 0 0 10px rgba(0,0,0,0.8);
     font-size: 1.2rem; 
     font-weight: 600;
 }
