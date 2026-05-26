@@ -31,8 +31,10 @@
             <button class="btn primary" onclick="goToScreen('menu-screen')">Jag är ready!</button>
         </div>
 
-        <div id="level-screen" class="screen hidden" style="position: relative;">
-            <div id="corner-trophy" class="corner-trophy hidden">🏆</div>
+        <div id="level-screen" class="screen hidden">
+            <div class="trophy-counter-badge">
+                <span class="trophy-icon">🏆</span> <span id="global-trophy-count">0</span> / 12
+            </div>
 
             <h2 id="map-title">Välj Nivå</h2>
             
@@ -48,7 +50,11 @@
             <button id="next-pack-btn" class="btn epic-btn hidden" onclick="activateNextPack()" style="margin-bottom: 16px; animation: cyberPulseBtn 1.5s infinite alternate;"></button>
 
             <button id="start-game-btn" class="btn primary" onclick="startGame()" disabled>Börja Utmaningen</button>
-            <button class="btn text-btn" onclick="resetAndGoBack()">← Tillbaka</button>
+            
+            <div style="display: flex; gap: 10px; margin-top: 8px;">
+                <button class="btn text-btn" onclick="resetAndGoBack()" style="flex: 1; margin-top: 0;">← Tillbaka</button>
+                <button class="btn text-btn reset-progress-btn" onclick="resetAllProgress()" style="flex: 1; margin-top: 0; font-size: 0.9rem; opacity: 0.6;">🔄 Starta om nivåer</button>
+            </div>
         </div>
 
         <div id="game-screen" class="screen hidden">
