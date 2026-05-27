@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
     <div class="game-container">
         
         <div id="menu-screen" class="screen">
@@ -77,17 +78,19 @@
         </div>
 
         <div id="victory-screen" class="screen hidden">
-            <div class="victory-card epic-win">
-                <div class="end-icon" id="victory-icon">🏆</div>
-                <h2 id="victory-title">UTMANINGEN AVKLARAD</h2>
+            <div class="victory-card epic-win cutscene-layout">
+                <div class="end-icon pop-anim" id="victory-icon">🏆</div>
+                <h2 id="victory-title" class="pop-anim delay-1">UTMANINGEN AVKLARAD</h2>
+                <p id="victory-text" class="pop-anim delay-2">Snyggt krossat!</p>
                 
-                <div class="stats-badge">
+                <div class="stats-badge pop-anim delay-3">
                     <span class="badge-label" id="badge-label">PRESTATION</span>
                     <div id="victory-lives-left" class="badge-value">❤️❤️❤️</div>
                 </div>
 
-                <p id="victory-text">Snyggt krossat!</p>
-                <button class="btn primary epic-btn" onclick="resetAndGoBack()">Fortsätt</button>
+                <div class="bottom-action pop-anim delay-4">
+                    <button class="btn primary epic-btn" onclick="resetAndGoBack()">Fortsätt</button>
+                </div>
             </div>
         </div>
 
