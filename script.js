@@ -1,3 +1,6 @@
+// =========================================================================
+//  GLOBAL GAME STATE & VARIABLES
+// =========================================================================
 let selectedLevel = null;
 let currentLevel = 1;
 let score = 0;
@@ -10,7 +13,9 @@ let completedLevels = JSON.parse(localStorage.getItem('mathgame-progress')) || [
 let currentPack = parseInt(localStorage.getItem('mathgame-pack')) || 1; 
 
 let isTransitioning = false;
+let currentTheme = localStorage.getItem('mathgame-theme') || 'cyber';
 
+// DOM-element för standardspelet
 const answerInput = document.getElementById('answer-input');
 const questionElement = document.getElementById('question');
 const feedbackElement = document.getElementById('feedback');
@@ -23,7 +28,41 @@ const gameCard = document.getElementById('game-card');
 const themeModal = document.getElementById('theme-modal');
 
 // =========================================================================
-// 100% BULLETPROOF LEVEL CLEAR LJUD (Genererar retro-arkadljud med kod!)
+//  NEW: BATTLE MODE STATE VARIABLES
+// =========================================================================
+let battleLevel = parseInt(localStorage.getItem('mathgame-battle-lvl')) || 1;
+let playerHP = 100;
+let enemyHP = 100;
+let enemyMaxHP = 100;
+let currentWeapon = 'light';
+let battleAnswer = 0;
+let isBattleTransitioning = false;
+
+// Sparar vapennivåer så att uppgraderingarna blir permanenta
+let weaponLevels = JSON.parse(localStorage.getItem('mathgame-wpn-levels')) || {
+    light: 1,
+    medium: 1,
+    heavy: 1
+};
+
+// Hämtar vapenskada baserat på nuvarande nivå (10/10 progression)
+function getWeaponDmg(type) {
+    const baseDamage = { light: 12, medium: 28, heavy: 55 };
+    const scaleFactor = { light: 4, medium: 8, heavy: 15 };
+    return baseDamage[type] + (weaponLevels[type] - 1) * scaleFactor;
+}
+
+// Hämtar vapennamn dynamiskt beroende på vilket tema som är aktivt
+function getWeaponName(type) {
+    if (currentTheme === 'cyber') {
+        return { light: "Laserkniv", medium: "Plasmagevär", heavy: "Cyber-Slägga" }[type];
+    } else {
+        return { light: "Snabb Dolk", medium: "Riddarsvärd", heavy: "Stridsslägga" }[type];
+    }
+}
+
+// =========================================================================
+//  AUDIO SYSTEM (Web Audio API - Genererar retro-arkadljud i realtid)
 // =========================================================================
 function playLevelClearSound() {
     try {
@@ -33,16 +72,13 @@ function playLevelClearSound() {
         const ctx = new AudioContext();
         const now = ctx.currentTime;
 
-        // Funktion för att spela en enskild ton (syntetisk)
         function playTone(freq, startTime, duration) {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
             
-            // 'triangle' ger ett mjukt, skönt Nintendo/arkad-ljud
             osc.type = 'triangle'; 
             osc.frequency.setValueAtTime(freq, startTime);
             
-            // Hantera volym och fade-out (så det inte klickar i högtalarna)
             gain.gain.setValueAtTime(0.08, startTime);
             gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
             
@@ -53,17 +89,20 @@ function playLevelClearSound() {
             osc.stop(startTime + duration);
         }
 
-        // En glad, uppåtgående Duolingo/Arkad-fanfar (C-E-G-C)
-        playTone(523.25, now, 0.15);        // C5
-        playTone(659.25, now + 0.12, 0.15); // E5
-        playTone(783.99, now + 0.24, 0.15); // G5
-        playTone(1046.50, now + 0.36, 0.5); // C6 (Sista långa vinsttonen!)
+        // En glad, uppåtgående arkad-fanfar (C-E-G-C)
+        playTone(523.25, now, 0.15);        
+        playTone(659.25, now + 0.12, 0.15); 
+        playTone(783.99, now + 0.24, 0.15); 
+        playTone(1046.50, now + 0.36, 0.5); 
 
     } catch (e) {
         console.log("Web Audio API stöds inte i denna webbläsare", e);
     }
 }
 
+// =========================================================================
+//  SCREEN NAVIGATION
+// =========================================================================
 function goToScreen(screenId) {
     document.querySelectorAll('.screen').forEach(screen => {
         screen.classList.add('hidden');
@@ -71,6 +110,217 @@ function goToScreen(screenId) {
     document.getElementById(screenId).classList.remove('hidden');
 }
 
+// =========================================================================
+//  BATTLE MODE LOGIC (NEW ENGINE)
+// =========================================================================
+function startBattleRound() {
+    playerHP = 100;
+    
+    // Fiendens HP skalar upp med arenans nivå. Var tredje nivå är en Boss!
+    const isBoss = (battleLevel % 3 === 0);
+    enemyMaxHP = 40 + (battleLevel * 20);
+    if (isBoss) {
+        enemyMaxHP = Math.floor(enemyMaxHP * 1.6);
+    }
+    enemyHP = enemyMaxHP;
+
+    // Återställ gränssnittet till vapenmenyn
+    document.getElementById('battle-quiz-container').classList.add('hidden');
+    document.getElementById('inventory-section').classList.remove('hidden');
+    
+    if (isBoss) {
+        document.getElementById('battle-feedback').textContent = "⚠️ BOSSSTRID INLEDS! Välj ditt vapen för att attackera!";
+    } else {
+        document.getElementById('battle-feedback').textContent = "En utmanare närmar sig! Välj ditt vapen för att anfalla!";
+    }
+
+    updateBattleUI();
+}
+
+function updateBattleUI() {
+    const isBoss = (battleLevel % 3 === 0);
+    
+    // Sätt rubriker och fiendenamn utifrån tema och boss-status
+    if (currentTheme === 'cyber') {
+        document.getElementById('battle-stage-title').textContent = isBoss ? `BOSS ARENA: SEKTOR ${battleLevel}` : `ARENA: SEKTOR ${battleLevel}`;
+        document.getElementById('enemy-name').textContent = isBoss ? "MEGABYTE OVERLORD" : `Skadlig Programvara v.${battleLevel}`;
+        document.getElementById('enemy-icon').textContent = isBoss ? "🤖" : "👾";
+    } else {
+        document.getElementById('battle-stage-title').textContent = isBoss ? `BOSS-GROTTA: NIVÅ ${battleLevel}` : `GROTTA: NIVÅ ${battleLevel}`;
+        document.getElementById('enemy-name').textContent = isBoss ? "DRAKEN MATEMATIKUS" : `Grott-Troll lvl.${battleLevel}`;
+        document.getElementById('enemy-icon').textContent = isBoss ? "🐉" : "👹";
+    }
+
+    // Uppdatera HP-mätare
+    const enemyPct = Math.max(0, (enemyHP / enemyMaxHP) * 100);
+    document.getElementById('enemy-hp-bar').style.width = `${enemyPct}%`;
+    document.getElementById('enemy-hp-text').textContent = `${Math.ceil(enemyHP)} / ${Math.ceil(enemyMaxHP)} HP`;
+
+    const playerPct = Math.max(0, (playerHP / 100) * 100);
+    document.getElementById('player-hp-bar').style.width = `${playerPct}%`;
+    document.getElementById('player-hp-text').textContent = `${Math.ceil(playerHP)} / 100 HP`;
+
+    // Uppdatera vapenknapparna med aktuella levels och skadevärden
+    const types = ['light', 'medium', 'heavy'];
+    types.forEach(t => {
+        document.getElementById(`wpn-${t}-name`).textContent = `${getWeaponName(t)} (Lvl ${weaponLevels[t]})`;
+        const descCard = document.querySelector(`.weapon-card.${t} .weapon-desc`);
+        if (descCard) {
+            const diffPrefix = t === 'light' ? 'Lätt matte' : t === 'medium' ? 'Medium matte' : 'Tung matte';
+            descCard.textContent = `${diffPrefix} (${getWeaponDmg(t)} DMG)`;
+        }
+    });
+}
+
+function selectWeapon(type) {
+    currentWeapon = type;
+    
+    // Växla menyer i stridszonen
+    document.getElementById('inventory-section').classList.add('hidden');
+    document.getElementById('battle-quiz-container').classList.remove('hidden');
+    
+    const inputField = document.getElementById('battle-answer-input');
+    const submitBtnEl = document.getElementById('battle-submit-btn');
+    
+    inputField.value = '';
+    inputField.disabled = false;
+    submitBtnEl.disabled = false;
+    isBattleTransitioning = false;
+    inputField.focus();
+
+    // Generera High Risk/High Reward matteuppgifter baserat på vapenval
+    let num1, num2;
+    if (type === 'light') {
+        // Lätt matte: Enkel addition/subtraktion
+        num1 = Math.floor(Math.random() * 12) + 3;
+        num2 = Math.floor(Math.random() * 12) + 3;
+        battleAnswer = num1 + num2;
+        document.getElementById('battle-question').textContent = `${num1} + ${num2}`;
+        document.getElementById('battle-feedback').textContent = `Laddar snabb attack med ${getWeaponName('light')}...`;
+    } else if (type === 'medium') {
+        // Medium matte: Multiplikationstabeller upp till 10
+        num1 = Math.floor(Math.random() * 8) + 2;
+        num2 = Math.floor(Math.random() * 9) + 2;
+        battleAnswer = num1 * num2;
+        document.getElementById('battle-question').textContent = `${num1} × ${num2}`;
+        document.getElementById('battle-feedback').textContent = `Siktar noga med ${getWeaponName('medium')}...`;
+    } else {
+        // Tung matte: Kvadrattal eller tuffare division
+        num1 = Math.floor(Math.random() * 8) + 4;
+        battleAnswer = num1 * num1;
+        document.getElementById('battle-question').textContent = `${num1}²`;
+        document.getElementById('battle-feedback').textContent = `Samlar enorm kraft till ${getWeaponName('heavy')}!`;
+    }
+}
+
+function checkBattleAnswer() {
+    if (isBattleTransitioning) return;
+    isBattleTransitioning = true;
+
+    const inputField = document.getElementById('battle-answer-input');
+    const submitBtnEl = document.getElementById('battle-submit-btn');
+    const userAnswer = parseInt(inputField.value);
+
+    if (isNaN(userAnswer)) {
+        isBattleTransitioning = false;
+        return;
+    }
+
+    inputField.disabled = true;
+    submitBtnEl.disabled = true;
+
+    if (userAnswer === battleAnswer) {
+        // SPELAREN TRÄFFAR FIENDEN
+        const dmg = getWeaponDmg(currentWeapon);
+        enemyHP -= dmg;
+        if (enemyHP < 0) enemyHP = 0;
+
+        document.getElementById('battle-feedback').textContent = `💥 TRÄFF! Du gör ${dmg} skada med din ${getWeaponName(currentWeapon)}!`;
+        
+        // Snygg skakeffekt på fiendens fält
+        const enemyBox = document.getElementById('enemy-icon').parentElement;
+        enemyBox.classList.add('enemy-hit');
+        setTimeout(() => enemyBox.classList.remove('enemy-hit'), 400);
+
+        updateBattleUI();
+
+        if (enemyHP <= 0) {
+            // SEGER! Fienden eller bossen är besegrad
+            playLevelClearSound();
+            const isBoss = (battleLevel % 3 === 0);
+
+            if (isBoss) {
+                // Boss ger legendarisk uppgradering till ALLA vapen!
+                weaponLevels.light += 1;
+                weaponLevels.medium += 1;
+                weaponLevels.heavy += 1;
+                document.getElementById('battle-feedback').textContent = `🏆 BOSS BESEGRAD! Alla dina vapen har uppgraderats till en helt ny nivå!`;
+            } else {
+                // Vanlig fiende uppgraderar det valda vapnet du använde
+                weaponLevels[currentWeapon] += 1;
+                document.getElementById('battle-feedback').textContent = `🎉 SEGER! Fienden krossades. Din ${getWeaponName(currentWeapon)} gick upp till Lvl ${weaponLevels[currentWeapon]}!`;
+            }
+
+            // Spara den nya vapennivån och arenan i localStorage
+            localStorage.setItem('mathgame-wpn-levels', JSON.stringify(weaponLevels));
+            battleLevel += 1;
+            localStorage.setItem('mathgame-battle-lvl', battleLevel);
+
+            // Gå vidare till nästa fiende efter en stunds firande
+            setTimeout(() => {
+                startBattleRound();
+            }, 2500);
+        } else {
+            // Fienden överlevde, återgå till vapenmenyn för nästa drag
+            setTimeout(() => {
+                document.getElementById('battle-quiz-container').classList.add('hidden');
+                document.getElementById('inventory-section').classList.remove('hidden');
+                document.getElementById('battle-feedback').textContent = "Välj ditt nästa vapen för attack!";
+                isBattleTransitioning = false;
+                updateBattleUI();
+            }, 1200);
+        }
+    } else {
+        // FIENDEN KONTRAR VID FEL SVAR
+        const enemyDmg = 15 + (battleLevel * 3);
+        playerHP -= enemyDmg;
+        if (playerHP < 0) playerHP = 0;
+
+        document.getElementById('battle-feedback').textContent = `❌ MISS! Du räknade fel. Fienden slår tillbaka och gör ${enemyDmg} skada på dig!`;
+        updateBattleUI();
+
+        if (playerHP <= 0) {
+            // SPELAREN FÖRLORAR STRIDEN
+            document.getElementById('battle-feedback').textContent = "☠️ Ditt HP nådde noll... Du svimmade och tvingades fly från arenan.";
+            setTimeout(() => {
+                goToScreen('level-screen');
+            }, 2500);
+        } else {
+            // Återgå till vapenvalet trots smällen
+            setTimeout(() => {
+                document.getElementById('battle-quiz-container').classList.add('hidden');
+                document.getElementById('inventory-section').classList.remove('hidden');
+                document.getElementById('battle-feedback').textContent = "Res dig upp! Välj ett vapen och försök igen!";
+                isBattleTransitioning = false;
+                updateBattleUI();
+            }, 1500);
+        }
+    }
+}
+
+// Koppla stridsknapparna till lyssnare
+document.getElementById('battle-submit-btn').addEventListener('click', checkBattleAnswer);
+document.getElementById('battle-answer-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        checkBattleAnswer();
+    }
+});
+
+
+// =========================================================================
+//  CAMPAIGN MODE LOGIC (STANDARDSPELET)
+// =========================================================================
 function selectLevel(levelNumber) {
     selectedLevel = levelNumber;
     document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('selected'));
@@ -202,7 +452,6 @@ function checkAnswer() {
             }
             updateMenuButtons();
             
-            // TRIGGA DET NYA BULLETPROOF-LJUDET HÄR 🔊
             playLevelClearSound();
 
             setTimeout(() => {
@@ -309,11 +558,16 @@ function activateNextPack() {
 }
 
 function resetAllProgress() {
-    if (confirm("Vill du starta om dina nivåer och rensa dina pokaler?")) {
+    if (confirm("Vill du starta om dina nivåer, rensa pokaler OCH nollställa dina vapennivåer i Arenan?")) {
         currentPack = 1;
         completedLevels = [];
+        battleLevel = 1;
+        weaponLevels = { light: 1, medium: 1, heavy: 1 };
+        
         localStorage.setItem('mathgame-pack', currentPack);
         localStorage.setItem('mathgame-progress', JSON.stringify(completedLevels));
+        localStorage.setItem('mathgame-battle-lvl', battleLevel);
+        localStorage.setItem('mathgame-wpn-levels', JSON.stringify(weaponLevels));
         
         selectedLevel = null;
         startGameBtn.disabled = true;
@@ -354,9 +608,8 @@ answerInput.addEventListener('keydown', (e) => {
 });
 
 // =========================================
-//  POP-UP LOGIK FÖR TEMABYTE
+//  THEME LOGIC & INITIALIZATION
 // =========================================
-let currentTheme = localStorage.getItem('mathgame-theme') || 'cyber';
 applyTheme(currentTheme);
 
 function openThemeModal() { themeModal.classList.remove('hidden'); }
@@ -368,6 +621,10 @@ function selectThemeViaModal(theme) {
     applyTheme(theme);
     localStorage.setItem('mathgame-theme', theme); 
     closeThemeModal();
+    // Uppdaterar arenans texter direkt om spelaren byter tema mitt i
+    if (!document.getElementById('battle-screen').classList.contains('hidden')) {
+        updateBattleUI();
+    }
 }
 
 function applyTheme(theme) {
@@ -412,4 +669,5 @@ function applyTheme(theme) {
     }
 
     checkGrandTrophy();
+    updateBattleUI();
 }
